@@ -9,6 +9,9 @@ const prisma = new PrismaClient();
 
 app.use(bodyParser.json());
 app.use(errorHandler);
+app.get("/", (req, res) => {
+  res.send("test");
+});
 UserModule(app, prisma);
 
 export default app;
