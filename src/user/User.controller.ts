@@ -30,7 +30,30 @@ export class UserController {
     return await this.userService.createUser(user);
   }
 
-  public putUser(param: unknown, body: unknown) {}
+  public async putUser(param: unknown, body: unknown) {
+    const schema = Joi.object({
+      email: Joi.string().email().required(),
+      name: Joi.string().required(),
+    });
+    const idSchema = Joi.object({
+      id: Joi.number().integer().required(),
+    });
+    const result = idSchema.validate(param);
+    if (result.error) {
+      throw new Error();
+    }
+    const user = schema.validate(body).value;
+    return await this.userService.updateUser(result.value.id, user);
+  }
 
-  public deleteUser(param: unknown) {}
+  public async deleteUser(param: unknown) {
+    const idSchema = Joi.object({
+      id: Joi.number().integer().required(),
+    });
+    const result = idSchema.validate(param);
+    if (result.error) {
+      throw new Error();
+    }
+    return await this.userService.deleteUser(result.value.id);
+  }
 }
