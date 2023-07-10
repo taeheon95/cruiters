@@ -1,18 +1,14 @@
-import express, { NextFunction, Request, Response } from "express";
+import express, { Express, NextFunction, Request, Response } from "express";
+import { PrismaClient } from "@prisma/client";
 import bodyParser from "body-parser";
-import resume from "./resume";
 import errorHandler from "./middlewares/errorhandler";
+import UserModule from "./user/User.module";
 
-const app = express();
+const app: Express = express();
+const prisma = new PrismaClient();
 
 app.use(bodyParser.json());
 app.use(errorHandler);
-
-app.use("/resume", resume);
-
-app.post("/", (request: Request, response: Response) => {
-  console.log(request.body);
-  response.send(request.body.data);
-});
+UserModule(app, prisma);
 
 export default app;
