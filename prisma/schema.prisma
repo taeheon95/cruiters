@@ -11,17 +11,62 @@ datasource db {
 }
 
 model User {
-  id    BigInt @id @default(autoincrement())
-  email String @unique
-  name  String
+  id       BigInt   @id @default(autoincrement())
+  email    String   @unique
+  name     String
+  createAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+  resume   Resume[]
 }
 
 model Resume {
-  id            BigInt @id @default(autoincrement())
+  id            BigInt      @id @default(autoincrement())
   title         String
   countryNumber String
   contact       String
   email         String
   profileImage  String
   coverLetter   String
+  createAt      DateTime    @default(now())
+  updateAt      DateTime    @updatedAt
+  education     Education[]
+  career        Career[]
+  User          User        @relation(fields: [userId], references: [id])
+  userId        BigInt
+}
+
+enum EDUCATION_STATUS {
+  GRADUATED // 졸업함
+  ATTEND // 재학중
+  ABSENCE // 휴학중
+  LEAVED // 퇴학
+  WILL_GRADUATE // 졸업예정
+}
+
+model Education {
+  id           BigInt           @id @default(autoincrement())
+  schoolType   String
+  schoolName   String
+  schoolRegion String
+  started      DateTime
+  ended        DateTime
+  status       EDUCATION_STATUS @default(GRADUATED)
+  Resume       Resume           @relation(fields: [resumeId], references: [id])
+  resumeId     BigInt
+}
+
+enum CAREER_STATUS {
+  WORKING // 재직중
+  RESIGNED // 퇴사
+}
+
+model Career {
+  id          BigInt        @id @default(autoincrement())
+  companyName String
+  department  String
+  started     DateTime
+  ended       DateTime
+  status      CAREER_STATUS @default(RESIGNED)
+  Resume      Resume        @relation(fields: [resumeId], references: [id])
+  resumeId    BigInt
 }
