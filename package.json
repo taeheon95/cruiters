@@ -6,6 +6,7 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
+    "postinstall": "husky install",
     "start": "nodemon --watch 'src/**/*.ts' --exec ts-node src/index.ts",
     "start:dev": "concurrently \"tsc -w\" \"nodemon dist/index.js\"",
     "test": "jest",
@@ -27,6 +28,7 @@
     "@typescript-eslint/parser": "^5.59.8",
     "concurrently": "^8.1.0",
     "eslint": "^8.42.0",
+    "husky": "^8.0.3",
     "jest": "^29.5.0",
     "nodemon": "^2.0.22",
     "prisma": "^4.16.2",
