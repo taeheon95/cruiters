@@ -9,7 +9,7 @@ export interface UserService extends Service {
   getUser(id: bigint): Promise<UserModel>;
   createUser(user: UserInputModel): Promise<UserModel>;
   updateUser(id: bigint, user: UserInputModel): Promise<UserModel>;
-  deleteUser(id: bigint): Promise<UserModel>;
+  deleteUser(id: bigint): void;
 }
 
 export class UserServiceImpl implements UserService {
@@ -20,10 +20,19 @@ export class UserServiceImpl implements UserService {
   }
 
   public async getUser(id: bigint) {
-    return await this.userRepository.findById(id);
+    const user = await this.userRepository.findById(id);
+    if (!user) {
+      throw new UserError("no user found");
+    }
+    return user;
   }
 
   public async createUser(user: UserInputModel) {
+    const existUser = await this.userRepository.findByEmail(user.email);
+    if (existUser != null) {
+      throw new UserError("duplicated email");
+    }
+
     return await this.userRepository.create(user);
   }
 
@@ -32,6 +41,6 @@ export class UserServiceImpl implements UserService {
   }
 
   public async deleteUser(id: bigint) {
-    return await this.userRepository.delete(id);
+    await this.userRepository.delete(id);
   }
 }

@@ -3,7 +3,7 @@ import { Repository } from "../common/Repository";
 import { UserInputModel, UserModel } from "./model/User";
 
 export interface UserRepository extends Repository<UserModel, bigint> {
-  findByEmail(email: string): Promise<UserModel>;
+  findByEmail(email: string): Promise<UserModel | null>;
 }
 
 export class UserRepositoryImpl implements UserRepository {
@@ -14,22 +14,22 @@ export class UserRepositoryImpl implements UserRepository {
     return userEntityList.map((userEntity) => new UserModel(userEntity));
   }
 
-  async findById(id: number | bigint): Promise<UserModel> {
-    const userEntity = await this.prisma.user.findUniqueOrThrow({
+  async findById(id: number | bigint): Promise<UserModel | null> {
+    const userEntity = await this.prisma.user.findUnique({
       where: {
         id,
       },
     });
-    return new UserModel(userEntity);
+    return userEntity ? new UserModel(userEntity) : null;
   }
 
-  async findByEmail(email: string): Promise<UserModel> {
-    const userEntity = await this.prisma.user.findUniqueOrThrow({
+  async findByEmail(email: string): Promise<UserModel | null> {
+    const userEntity = await this.prisma.user.findUnique({
       where: {
         email,
       },
     });
-    return new UserModel(userEntity);
+    return userEntity ? new UserModel(userEntity) : null;
   }
 
   async create(user: UserInputModel): Promise<UserModel> {
