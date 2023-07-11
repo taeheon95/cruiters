@@ -50,13 +50,11 @@ export class UserRepositoryImpl implements UserRepository {
     return new UserModel(userEntity);
   }
 
-  async delete(id: bigint): Promise<UserModel> {
-    const userEntity = await this.prisma.user.delete({
+  async delete(id: bigint) {
+    await this.prisma.user.delete({
       where: {
         id,
       },
     });
-
-    return new UserModel(userEntity);
   }
 }

@@ -1,8 +1,8 @@
-import express, { Express, NextFunction, Request, Response } from "express";
+import express, { Express } from "express";
 import { PrismaClient } from "@prisma/client";
 import bodyParser from "body-parser";
-import errorHandler from "./middlewares/errorhandler";
-import UserModule from "./user/User.module";
+import errorHandler from "./main/middlewares/errorhandler";
+import UserModule from "./main/user/User.module";
 
 const app: Express = express();
 const prisma = new PrismaClient();
