@@ -8,6 +8,13 @@ const config: Config = {
     "^.+\\.(t|j)s$": "ts-jest",
   },
   collectCoverageFrom: ["**/*.(t|j)s"],
+  coveragePathIgnorePatterns: [
+    ".repository.ts",
+    ".model.ts",
+    ".module.ts",
+    "src/test",
+    "src/index.ts",
+  ],
   coverageDirectory: "../coverage",
   testEnvironment: "node",
 };

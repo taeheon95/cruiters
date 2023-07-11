@@ -2,7 +2,7 @@ import { UserError } from "../../main/exception/UserError";
 import { UserRepository } from "../../main/user/User.repository";
 import { UserService, UserServiceImpl } from "../../main/user/User.service";
 import { UserInputModel } from "../../main/user/model/User";
-import { UserTestRepository } from "./UserTestRepository";
+import { UserTestRepository } from "./user.testrepository";
 
 describe("user service 단순 crud test", () => {
   const userRepository = new UserTestRepository([
