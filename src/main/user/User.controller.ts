@@ -1,7 +1,7 @@
-import { Express, Request, Response } from "express";
 import { UserService } from "./User.service";
-import Joi from "joi";
 import { UserModel } from "./model/User";
+import { UserInputModelValidator } from "./model/User.validator";
+import { NumberPipe } from "../common/Validator";
 
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -11,49 +11,23 @@ export class UserController {
   }
 
   public async getUser(param: unknown) {
-    const schema = Joi.object({
-      id: Joi.number().integer().required(),
-    });
-    const result = schema.validate(param);
-    if (result.error) {
-      throw new Error();
-    }
-    return await this.userService.getUser(BigInt(result.value.id));
+    const id = new NumberPipe().validate(param);
+    return await this.userService.getUser(BigInt(id));
   }
 
   public async postUser(body: unknown) {
-    const schema = Joi.object({
-      email: Joi.string().email().required(),
-      name: Joi.string().required(),
-    });
-    const user = schema.validate(body).value;
+    const user = new UserInputModelValidator().validate(body);
     return await this.userService.createUser(user);
   }
 
   public async putUser(param: unknown, body: unknown) {
-    const schema = Joi.object({
-      email: Joi.string().email().required(),
-      name: Joi.string().required(),
-    });
-    const idSchema = Joi.object({
-      id: Joi.number().integer().required(),
-    });
-    const result = idSchema.validate(param);
-    if (result.error) {
-      throw new Error();
-    }
-    const user = schema.validate(body).value;
-    return await this.userService.updateUser(result.value.id, user);
+    const id = new NumberPipe().validate(param);
+    const user = new UserInputModelValidator().validate(body);
+    return await this.userService.updateUser(BigInt(id), user);
   }
 
   public async deleteUser(param: unknown) {
-    const idSchema = Joi.object({
-      id: Joi.number().integer().required(),
-    });
-    const result = idSchema.validate(param);
-    if (result.error) {
-      throw new Error();
-    }
-    return await this.userService.deleteUser(result.value.id);
+    const id = new NumberPipe().validate(param);
+    return await this.userService.deleteUser(BigInt(id));
   }
 }

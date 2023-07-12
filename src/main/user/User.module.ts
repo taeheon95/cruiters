@@ -20,15 +20,18 @@ export default (app: Express, prisma: PrismaClient) => {
   });
   router.post("/", async (req, resp) => {
     const result = await userController.postUser(req.body);
-    resp.setHeader("location", `/user/${result.id.toString()}`);
-    resp.status(201).json({
-      ...result,
-      id: Number(result.id),
-    });
+    resp
+      .setHeader("location", `/user/${result.id.toString()}`)
+      .status(201)
+      .json({
+        ...result,
+      });
   });
   router.put("/:id", async (req, resp) => {
     const result = await userController.putUser(req.params, req.body);
-    resp.json(result);
+    resp.setHeader("location", `/user/${result.id}`).json({
+      ...result,
+    });
   });
   router.delete("/:id", async (req, resp) => {
     const result = await userController.deleteUser(req.params);

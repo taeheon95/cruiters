@@ -16,9 +16,9 @@ export class UserInputModel {
   private _email: string;
   private _name: string;
 
-  constructor() {
-    this._email = "";
-    this._name = "";
+  constructor(email = "", name = "") {
+    this._email = email;
+    this._name = name;
   }
 
   set email(email: string) {
