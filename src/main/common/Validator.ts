@@ -1,29 +1,24 @@
 import Joi from "joi";
 
-export abstract class Validator<T> {
-  constructor(private readonly schema: Joi.ObjectSchema<T>) {}
-
-  validate(instance: unknown): T {
-    const validationResult = this.schema.validate(instance);
-    if (validationResult.error) {
-      this.onError(validationResult.error);
+export const validate =
+  <T>(
+    schema: Joi.ObjectSchema,
+    onError: (error: Joi.ValidationError) => void
+  ) =>
+  (instance: unknown) => {
+    const result = schema.validate(instance);
+    if (result.error) {
+      onError(result.error);
     }
-    return validationResult.value as T;
-  }
+    return result.value as T;
+  };
 
-  abstract onError(error: Joi.ValidationError): void;
-}
+const numberPipeSchema = (key: string) =>
+  Joi.object({
+    [key]: Joi.number().integer().required(),
+  });
 
-const idSchema = Joi.object({
-  id: Joi.number().integer().required(),
-});
-
-export class NumberPipe extends Validator<number> {
-  constructor() {
-    super(idSchema);
-  }
-
-  onError(error: Joi.ValidationError): void {
-    throw new Error("");
-  }
-}
+export const numberPipe = (key: string, instance: unknown) =>
+  validate<{ [key: string]: number }>(numberPipeSchema(key), () => {})(
+    instance
+  );

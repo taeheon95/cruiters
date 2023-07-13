@@ -1,6 +1,6 @@
 import Joi from "joi";
 import { UserError } from "../../exception/UserError";
-import { Validator } from "../../common/Validator";
+import { validate } from "../../common/Validator";
 import { UserInputModel, UserModel } from "./User";
 
 const userModelDefaultSchema = Joi.object({
@@ -8,20 +8,16 @@ const userModelDefaultSchema = Joi.object({
   name: Joi.string().required(),
 });
 
-export class UserModelValidator extends Validator<UserModel> {
-  constructor() {
-    super(userModelDefaultSchema);
-  }
-  onError(error: Joi.ValidationError): void {
+export const userModelValidater = validate<UserModel>(
+  userModelDefaultSchema,
+  (error) => {
     throw new UserError("");
   }
-}
+);
 
-export class UserInputModelValidator extends Validator<UserInputModel> {
-  constructor() {
-    super(userModelDefaultSchema);
-  }
-  onError(error: Joi.ValidationError): void {
+export const userInputModelValidater = validate<UserInputModel>(
+  userModelDefaultSchema,
+  (error) => {
     throw new UserError("");
   }
-}
+);

@@ -1,7 +1,7 @@
 import { UserService } from "./User.service";
 import { UserModel } from "./model/User";
-import { UserInputModelValidator } from "./model/User.validator";
-import { NumberPipe } from "../common/Validator";
+import { userInputModelValidater } from "./model/User.validator";
+import { numberPipe } from "../common/Validator";
 
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -11,23 +11,23 @@ export class UserController {
   }
 
   public async getUser(param: unknown) {
-    const id = new NumberPipe().validate(param);
+    const { id } = numberPipe("id", param);
     return await this.userService.getUser(BigInt(id));
   }
 
   public async postUser(body: unknown) {
-    const user = new UserInputModelValidator().validate(body);
+    const user = userInputModelValidater(body);
     return await this.userService.createUser(user);
   }
 
   public async putUser(param: unknown, body: unknown) {
-    const id = new NumberPipe().validate(param);
-    const user = new UserInputModelValidator().validate(body);
+    const { id } = numberPipe("id", param);
+    const user = userInputModelValidater(body);
     return await this.userService.updateUser(BigInt(id), user);
   }
 
   public async deleteUser(param: unknown) {
-    const id = new NumberPipe().validate(param);
+    const { id } = numberPipe("id", param);
     return await this.userService.deleteUser(BigInt(id));
   }
 }
