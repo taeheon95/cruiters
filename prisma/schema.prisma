@@ -13,25 +13,27 @@ datasource db {
 model User {
   id       BigInt   @id @default(autoincrement())
   email    String   @unique
-  name     String
+  name     String   @db.VarChar(20)
   createAt DateTime @default(now())
   updateAt DateTime @updatedAt
   resume   Resume[]
 }
 
 model Resume {
-  id            BigInt      @id @default(autoincrement())
-  title         String
-  countryNumber String
-  contact       String
-  email         String
-  profileImage  String
+  id            BigInt          @id @default(autoincrement())
+  title         String          @db.VarChar(200)
+  countryNumber String          @db.VarChar(10)
+  contact       String          @db.VarChar(20)
+  address       String          @db.VarChar(200)
+  email         String          @db.VarChar(100)
+  profileImage  String          @db.VarChar(100)
   coverLetter   String
-  createAt      DateTime    @default(now())
-  updateAt      DateTime    @updatedAt
+  createAt      DateTime        @default(now())
+  updateAt      DateTime        @updatedAt
   education     Education[]
   career        Career[]
-  User          User        @relation(fields: [userId], references: [id])
+  Certification Certification[]
+  User          User            @relation(fields: [userId], references: [id])
   userId        BigInt
 }
 
@@ -45,9 +47,9 @@ enum EDUCATION_STATUS {
 
 model Education {
   id           BigInt           @id @default(autoincrement())
-  schoolType   String
-  schoolName   String
-  schoolRegion String
+  schoolType   String           @db.VarChar(20)
+  schoolName   String           @db.VarChar(20)
+  schoolRegion String           @db.VarChar(20)
   started      DateTime
   ended        DateTime
   status       EDUCATION_STATUS @default(GRADUATED)
@@ -62,11 +64,21 @@ enum CAREER_STATUS {
 
 model Career {
   id          BigInt        @id @default(autoincrement())
-  companyName String
-  department  String
+  companyName String        @db.VarChar(100)
+  department  String        @db.VarChar(20)
   started     DateTime
   ended       DateTime
   status      CAREER_STATUS @default(RESIGNED)
   Resume      Resume        @relation(fields: [resumeId], references: [id])
   resumeId    BigInt
+}
+
+model Certification {
+  id              BigInt   @id @default(autoincrement())
+  name            String   @db.VarChar(100)
+  acquisitionDate DateTime
+  agency          String   @db.VarChar(100)
+  grade           String   @db.VarChar(20)
+  Resume          Resume   @relation(fields: [resumeId], references: [id])
+  resumeId        BigInt
 }
