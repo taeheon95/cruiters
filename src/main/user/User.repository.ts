@@ -43,7 +43,6 @@ export class UserRepositoryImpl implements UserRepository {
         id,
       },
       data: {
-        email: user.email,
         name: user.name,
       },
     });

@@ -36,6 +36,10 @@ export class UserServiceImpl implements UserService {
   }
 
   public async updateUser(id: bigint, user: UserInputModel) {
+    const existUser = await this.userRepository.findById(id);
+    if (existUser === null) {
+      throw new UserError("user not exist");
+    }
     return await this.userRepository.update(id, user);
   }
 
