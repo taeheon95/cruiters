@@ -11,3 +11,11 @@ it("유저 모델 검증 클래스 테스트", () => {
     name: "test1",
   });
 });
+
+it("유저 모델 에러 테스트", () => {
+  expect(async () => {
+    userInputModelValidater({
+      email: "test1@gmail.com",
+    });
+  }).rejects.toThrowError(new UserError(""));
+});
