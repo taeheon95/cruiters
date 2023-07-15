@@ -12,29 +12,61 @@ datasource db {
 
 model User {
   id       BigInt   @id @default(autoincrement())
-  email    String   @unique
   name     String   @db.VarChar(20)
-  createAt DateTime @default(now())
-  updateAt DateTime @updatedAt
+  createAt DateTime @default(now()) @map("create_at")
+  updateAt DateTime @updatedAt @map("update_at")
+  profile  Profile?
   resume   Resume[]
+
+  @@map("t_user")
+}
+
+model Profile {
+  userId        BigInt
+  birthDate     DateTime @map("birth_date") @db.Date
+  countryNumber String   @map("country_number") @db.VarChar(10)
+  contact       String   @db.VarChar(10)
+  email         String   @db.VarChar(100)
+  address       String   @db.VarChar(200)
+  profileImage  String   @map("profile_image") @db.VarChar(100)
+  User          User     @relation(fields: [userId], references: [id])
+
+  @@id([userId])
+  @@index([email])
+  @@map("t_profile")
 }
 
 model Resume {
   id            BigInt          @id @default(autoincrement())
-  title         String          @db.VarChar(200)
-  countryNumber String          @db.VarChar(10)
+  title         String          @db.VarChar(100)
+  birthDate     DateTime        @map("birth_date") @db.Date
+  countryNumber String          @map("country_number") @db.VarChar(10)
   contact       String          @db.VarChar(20)
   address       String          @db.VarChar(200)
   email         String          @db.VarChar(100)
-  profileImage  String          @db.VarChar(100)
-  coverLetter   String
-  createAt      DateTime        @default(now())
-  updateAt      DateTime        @updatedAt
+  profileImage  String          @map("profile_image") @db.VarChar(100)
+  createAt      DateTime        @default(now()) @map("create_at")
+  updateAt      DateTime        @updatedAt @map("update_at")
   education     Education[]
   career        Career[]
   Certification Certification[]
+  CoverLetter   CoverLetter[]
   User          User            @relation(fields: [userId], references: [id])
-  userId        BigInt
+  userId        BigInt          @map("user_id")
+
+  @@index([userId])
+  @@map("t_resume")
+}
+
+model CoverLetter {
+  id       BigInt @id @default(autoincrement())
+  title    String @db.VarChar(100)
+  content  String
+  resume   Resume @relation(fields: [resumeId], references: [id])
+  resumeId BigInt
+
+  @@index([resumeId])
+  @@map("t_cover_letter")
 }
 
 enum EDUCATION_STATUS {
@@ -46,15 +78,18 @@ enum EDUCATION_STATUS {
 }
 
 model Education {
-  id           BigInt           @id @default(autoincrement())
-  schoolType   String           @db.VarChar(20)
-  schoolName   String           @db.VarChar(20)
-  schoolRegion String           @db.VarChar(20)
-  started      DateTime
-  ended        DateTime
-  status       EDUCATION_STATUS @default(GRADUATED)
-  Resume       Resume           @relation(fields: [resumeId], references: [id])
-  resumeId     BigInt
+  id       BigInt           @id @default(autoincrement())
+  type     String           @map("school_type") @db.VarChar(20)
+  name     String           @map("school_name") @db.VarChar(20)
+  region   String           @map("school_region") @db.VarChar(20)
+  started  DateTime
+  ended    DateTime
+  status   EDUCATION_STATUS @default(GRADUATED)
+  resume   Resume           @relation(fields: [resumeId], references: [id])
+  resumeId BigInt           @map("resume_id")
+
+  @@index([resumeId])
+  @@map("t_education")
 }
 
 enum CAREER_STATUS {
@@ -64,21 +99,27 @@ enum CAREER_STATUS {
 
 model Career {
   id          BigInt        @id @default(autoincrement())
-  companyName String        @db.VarChar(100)
+  companyName String        @map("company_name") @db.VarChar(100)
   department  String        @db.VarChar(20)
   started     DateTime
   ended       DateTime
   status      CAREER_STATUS @default(RESIGNED)
-  Resume      Resume        @relation(fields: [resumeId], references: [id])
-  resumeId    BigInt
+  resume      Resume        @relation(fields: [resumeId], references: [id])
+  resumeId    BigInt        @map("resume_id")
+
+  @@index([resumeId])
+  @@map("t_career")
 }
 
 model Certification {
   id              BigInt   @id @default(autoincrement())
   name            String   @db.VarChar(100)
-  acquisitionDate DateTime
+  acquisitionDate DateTime @map("acquisition_date")
   agency          String   @db.VarChar(100)
   grade           String   @db.VarChar(20)
-  Resume          Resume   @relation(fields: [resumeId], references: [id])
-  resumeId        BigInt
+  resume          Resume   @relation(fields: [resumeId], references: [id])
+  resumeId        BigInt   @map("resume_id")
+
+  @@index([resumeId])
+  @@map("t_certification")
 }
