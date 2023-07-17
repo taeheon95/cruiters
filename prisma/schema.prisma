@@ -11,12 +11,13 @@ datasource db {
 }
 
 model User {
-  id       BigInt   @id @default(autoincrement())
-  name     String   @db.VarChar(20)
-  createAt DateTime @default(now()) @map("create_at")
-  updateAt DateTime @updatedAt @map("update_at")
-  profile  Profile?
-  resume   Resume[]
+  id        BigInt   @id @default(autoincrement())
+  name      String   @db.VarChar(20)
+  isDeleted Boolean  @default(false) @map("is_deleted")
+  createAt  DateTime @default(now()) @map("create_at")
+  updateAt  DateTime @updatedAt @map("update_at")
+  profile   Profile?
+  resume    Resume[]
 
   @@map("t_user")
 }
@@ -26,7 +27,7 @@ model Profile {
   birthDate     DateTime @map("birth_date") @db.Date
   countryNumber String   @map("country_number") @db.VarChar(10)
   contact       String   @db.VarChar(10)
-  email         String   @db.VarChar(100)
+  email         String   @unique @db.VarChar(100)
   address       String   @db.VarChar(200)
   profileImage  String   @map("profile_image") @db.VarChar(100)
   User          User     @relation(fields: [userId], references: [id])
@@ -39,6 +40,7 @@ model Profile {
 model Resume {
   id            BigInt          @id @default(autoincrement())
   title         String          @db.VarChar(100)
+  isDeleted     Boolean         @default(false) @map("is_deleted")
   birthDate     DateTime        @map("birth_date") @db.Date
   countryNumber String          @map("country_number") @db.VarChar(10)
   contact       String          @db.VarChar(20)
@@ -82,8 +84,8 @@ model Education {
   type     String           @map("school_type") @db.VarChar(20)
   name     String           @map("school_name") @db.VarChar(20)
   region   String           @map("school_region") @db.VarChar(20)
-  started  DateTime
-  ended    DateTime
+  startAt  String           @map("start_at") @db.VarChar(10)
+  endAt    String           @map("end_at") @db.VarChar(10)
   status   EDUCATION_STATUS @default(GRADUATED)
   resume   Resume           @relation(fields: [resumeId], references: [id])
   resumeId BigInt           @map("resume_id")
@@ -99,10 +101,12 @@ enum CAREER_STATUS {
 
 model Career {
   id          BigInt        @id @default(autoincrement())
+  startAt     String        @map("start_at") @db.VarChar(10)
+  endAt       String        @map("end_at") @db.VarChar(10)
   companyName String        @map("company_name") @db.VarChar(100)
   department  String        @db.VarChar(20)
-  started     DateTime
-  ended       DateTime
+  position    String        @db.VarChar(20)
+  content     String
   status      CAREER_STATUS @default(RESIGNED)
   resume      Resume        @relation(fields: [resumeId], references: [id])
   resumeId    BigInt        @map("resume_id")
