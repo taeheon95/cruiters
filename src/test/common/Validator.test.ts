@@ -7,7 +7,7 @@ describe("validate 함수 테스트", () => {
     Joi.object({
       id: Joi.number().integer().required(),
     }),
-    mockFn
+    mockFn,
   );
   it("성공 시", () => {
     const { id } = validator({ id: 1 });

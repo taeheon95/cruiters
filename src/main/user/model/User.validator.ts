@@ -12,12 +12,12 @@ export const userModelValidater = validate<UserModel>(
   userModelDefaultSchema,
   (error) => {
     throw new UserError("");
-  }
+  },
 );
 
 export const userInputModelValidater = validate<UserInputModel>(
   userModelDefaultSchema,
   (error) => {
     throw new UserError("");
-  }
+  },
 );

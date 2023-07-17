@@ -19,7 +19,7 @@ export class UserTestRepository implements UserRepository {
 
   findByEmail(email: string): Promise<UserModel | null> {
     const userModel: UserModel | undefined = this.userModelList.find(
-      (user) => user.email === email
+      (user) => user.email === email,
     );
 
     return Promise.resolve(userModel ? userModel : null);
@@ -29,7 +29,7 @@ export class UserTestRepository implements UserRepository {
   }
   findById(id: bigint): Promise<UserModel | null> {
     const userModel: UserModel | undefined = this.userModelList.find(
-      (user) => user.id === Number(id)
+      (user) => user.id === Number(id),
     );
     return Promise.resolve(userModel ? userModel : null);
   }
@@ -55,7 +55,7 @@ export class UserTestRepository implements UserRepository {
   }
   delete(id: bigint) {
     this.userModelList = this.userModelList.filter(
-      (user) => user.id !== Number(id)
+      (user) => user.id !== Number(id),
     );
   }
 }

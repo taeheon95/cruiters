@@ -1,5 +1,5 @@
-import { Service } from '../common/Service';
-import { ResumeRepository } from './Resume.repostiroy';
+import { Service } from "../common/Service";
+import { ResumeRepository } from "./Resume.repostiroy";
 
 export interface ResumeService extends Service {}
 

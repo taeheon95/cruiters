@@ -7,7 +7,6 @@ export class UserModel {
 
   constructor(userEntity: User) {
     this.id = Number(userEntity.id);
-    this.email = userEntity.email;
     this.name = userEntity.name;
   }
 }
