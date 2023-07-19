@@ -2,7 +2,7 @@ import Joi from "joi";
 import { datePattern, validateDate } from "../../../util/dateutil";
 import { DateTime } from "luxon";
 
-interface UserSearch {
+export interface UserSearch {
   name?: string;
   countryNumber?: string;
   contact?: string;
@@ -30,8 +30,8 @@ const userSearchSchema = Joi.object({
   updateAtEnd: Joi.string().pattern(datePattern),
 });
 
-const validateUserSearchSchema = async (instance: unknown) => {
-  const checkResult = await userSearchSchema.validate(instance);
+const validateUserSearchSchema = (instance: unknown) => {
+  const checkResult = userSearchSchema.validate(instance);
   if (checkResult.error) {
   }
   const searchValue: UserSearch = checkResult.value;
@@ -43,6 +43,8 @@ const validateUserSearchSchema = async (instance: unknown) => {
     DateTime.fromFormat(searchValue.birthDateStart, "yyyy-LL-dd").isValid ===
       false;
   }
+
+  return searchValue;
 };
 
 export { validateUserSearchSchema };

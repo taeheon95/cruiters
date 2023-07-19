@@ -1,14 +1,15 @@
 import { UserService } from "./User.service";
-import { UserModel } from "./model/User";
 import { userInputModelValidater } from "./model/User.validator";
 import { numberPipe } from "../common/Validator";
 import { Request, Response } from "express";
+import { validateUserSearchSchema } from "./model/dto/UserSearch.dto";
 
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  public async getUserList(req: Request, res: Response): Promise<UserModel[]> {
-    const userList = this.userService.getUserList();
+  public async getUserList(req: Request, res: Response) {
+    const query = validateUserSearchSchema(req.query);
+    const userList = await this.userService.getUserList(query);
     res.status(200).json(userList);
   }
 
