@@ -1,23 +1,45 @@
 import { PrismaClient, User } from "@prisma/client";
 import { Repository } from "../common/Repository";
 import { UserInputModel, UserModel } from "./model/User";
+import { UserSearch } from "./model/dto/UserSearch.dto";
 
 export interface UserRepository extends Repository<User, bigint> {}
 
 export class UserRepositoryImpl implements UserRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
-  async findAll(): Promise<User[]> {
+  async findAll(searchParam: UserSearch): Promise<User[]> {
     return await this.prisma.user.findMany({
       include: {
         profile: true,
       },
       where: {
         name: {
-          endsWith: "",
+          contains: searchParam.name,
         },
         profile: {
-          birthDate: {},
+          countryNumber: searchParam.countryNumber,
+          contact: {
+            contains: searchParam.contact,
+          },
+          email: {
+            contains: searchParam.email,
+          },
+          address: {
+            contains: searchParam.address,
+          },
+          birthDate: {
+            gte: searchParam.birthDateStart,
+            lte: searchParam.birthDateEnd,
+          },
+        },
+        createAt: {
+          gte: searchParam.createAtStart,
+          lte: searchParam.createAtEnd,
+        },
+        updateAt: {
+          gte: searchParam.updateAtStart,
+          lte: searchParam.updateAtEnd,
         },
       },
     });
