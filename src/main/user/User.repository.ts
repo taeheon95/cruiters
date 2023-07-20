@@ -1,15 +1,15 @@
-import { PrismaClient, User } from "@prisma/client";
-import { Repository } from "../common/Repository";
-import { UserInputModel, UserModel } from "./model/User";
-import { UserSearch } from "./model/dto/UserSearch.dto";
+import { PrismaClient, User } from '@prisma/client';
+import { Repository } from '../common/Repository';
+import { UserInputModel, UserModel } from './model/User';
+import { UserSearch } from './model/dto/UserSearch.dto';
 
-export interface UserRepository extends Repository<User, bigint> {}
+export interface UserRepository extends Repository<UserModel, bigint> {}
 
 export class UserRepositoryImpl implements UserRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
-  async findAll(searchParam: UserSearch): Promise<User[]> {
-    return await this.prisma.user.findMany({
+  async findAll(searchParam: UserSearch): Promise<UserModel[]> {
+    const userList = await this.prisma.user.findMany({
       include: {
         profile: true,
       },
@@ -43,38 +43,95 @@ export class UserRepositoryImpl implements UserRepository {
         },
       },
     });
+    return userList.map((user) => UserModel.create(user));
   }
 
-  async findById(id: bigint): Promise<User | null> {
-    return await this.prisma.user.findUnique({
-      where: {
-        id,
+  async findById(id: bigint): Promise<UserModel> {
+    const user = UserModel.create(
+      await this.prisma.user.findUnique({
+        include: {
+          profile: true,
+        },
+        where: {
+          id,
+        },
+      })
+    );
+    return user;
+  }
+
+  async create(userCreate: UserInputModel): Promise<UserModel> {
+    const result = await this.prisma.user.create({
+      include: {
+        profile: true,
+      },
+      data: {
+        name: userCreate.name,
+        profile: {
+          create: this.putUserData(userCreate),
+        },
       },
     });
+    return UserModel.create(result);
   }
 
-  async create(user: unknown): Promise<User> {
-    // @ts-ignore
-    return await this.prisma.user.create({ data: user });
-  }
-
-  async update(id: bigint, user: UserInputModel): Promise<User> {
+  async update(id: bigint, user: UserInputModel): Promise<UserModel> {
     const userEntity = await this.prisma.user.update({
+      include: {
+        profile: true,
+      },
       where: {
         id,
       },
       data: {
         name: user.name,
+        profile: {
+          update: {
+            data: this.putUserData(user),
+            where: {
+              userId: id,
+            },
+          },
+        },
       },
     });
-    return userEntity;
+    return UserModel.create(userEntity);
   }
 
   async delete(id: bigint) {
-    return await this.prisma.user.delete({
+    const deletedUser = await this.prisma.user.update({
+      data: {
+        isDeleted: true,
+        resume: {
+          updateMany: {
+            data: {
+              isDeleted: true,
+            },
+            where: {
+              userId: id,
+            },
+          },
+        },
+      },
+      include: {
+        profile: true,
+        resume: true,
+      },
       where: {
         id,
       },
     });
+    return UserModel.create(deletedUser);
+  }
+
+  private putUserData(user: UserInputModel) {
+    return {
+      birthDate: user.birthDate,
+      address: user.address,
+      contact: user.contact,
+      countryNumber: user.countryNumber,
+      email: user.email,
+      profileImage: user.profileImage,
+    };
   }
 }
