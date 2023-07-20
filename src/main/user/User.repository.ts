@@ -43,7 +43,7 @@ export class UserRepositoryImpl implements UserRepository {
         },
       },
     });
-    return userList.map((user) => UserModel.create(user));
+    return userList.map(UserModel.create);
   }
 
   async findById(id: bigint): Promise<UserModel> {
