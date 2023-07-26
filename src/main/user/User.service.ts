@@ -6,9 +6,9 @@ import UserCreate from './model/dto/UserCreate.dto';
 import { UserSearch } from './model/dto/UserSearch.dto';
 
 export interface UserService extends Service {
-  getUserList(searchParams: UserSearch): Promise<UserModel[]>;
+  getUserList(searchParams?: UserSearch): Promise<UserModel[]>;
   getUser(id: bigint): Promise<UserModel>;
-  createUser(user: UserCreate): Promise<UserModel>;
+  createUser(user: UserInputModel): Promise<UserModel>;
   updateUser(id: bigint, user: UserInputModel): Promise<UserModel>;
   deleteUser(id: bigint): void;
 }
@@ -28,7 +28,7 @@ export class UserServiceImpl implements UserService {
     return user;
   }
 
-  public async createUser(user: UserCreate) {
+  public async createUser(user: UserInputModel) {
     return await this.userRepository.create(user);
   }
 
